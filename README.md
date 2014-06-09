@@ -13,7 +13,7 @@ The short answer is that if you do not handle robustness issues, your code *will
 
 One of the most basic tasks in computational geometry is to classify wether a point lies to the left or right of a line (as defined by two points).  
 
-<img src="images/left-right.png">
+<img src="images/left-right.png" width="300">
 
 Naively, one might attempt to implement such a test using a determinant calculation, for example as follows:
 
