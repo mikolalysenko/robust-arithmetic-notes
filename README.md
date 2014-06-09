@@ -1,23 +1,23 @@
 # Robust arithmetic in JavaScript
 
-# Why robustness matters
+## Why robustness matters
 
-## Some misconceptions about robustness
+### Some misconceptions about robustness
 
-# When is robustness achievable?
+## When is robustness achievable?
 
-## Constructions vs predicates
+### Constructions vs predicates
 
-# How do we implement robustness?
+## How do we implement robustness?
 
-## Overview of floating point arithmetic
+### Overview of floating point arithmetic
 
-## Addition
+### Addition
 
-## Multiplication
+### Multiplication
 
-## Adaptivity
+### Adaptivity
 
-# Writing robust code in JavaScript
+## Writing robust code in JavaScript
 
-## Summary of robust-* modules
+### Summary of robust-* modules
