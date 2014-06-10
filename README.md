@@ -141,18 +141,49 @@ Incredibly, the resulting polygon isn't even convex!  The moral of the story is 
 
 ## Numbers in the word RAM
 
-To better understand what goes wrong with approximate arithmetic, we will review a few of the common representations for real numbers that are used in computers.
+To better understand what goes wrong with robustness, we will review a few of the common representations for real numbers that are used in computers.
 
 ### Integers
 
-The default data type in the word RAM model, and generally in any computer, is [finite size integer](http://en.wikipedia.org/wiki/Word_(computer_architecture)).  These integers are encoded as bit strings of length `n` and can represent any number from `0` to `2^n - 1`, or `-2^(n-1)` to `2^(n-1) - 1` using [two's complement](http://en.wikipedia.org/wiki/Two's_complement). Excluding overflow, arithmetic on integers is exact.
+The default data type in the word RAM model, and generally in any computer, is [finite size integer](http://en.wikipedia.org/wiki/Word_(computer_architecture)).  These integers are encoded as bit strings of length `n` and can represent any number from `0` to `2^n - 1`, or `-2^(n-1)` to `2^(n-1) - 1` using [two's complement](http://en.wikipedia.org/wiki/Two's_complement). Excluding overflow, arithmetic on integers is exact, however it has the disadvantage that fractional numbers cannot be represented.
 
 ### Fixed point
 
+[Fixed point numbers](http://en.wikipedia.org/wiki/Fixed-point_arithmetic) provide an efficient solution to this problem.  Binary fixed point numbers work much like [decimal notation](http://en.wikipedia.org/wiki/Decimal_mark) for writing a fraction.  The general idea is that we take any integer, and split its bits into two parts: those bits which are after the "decimal point" and those that come before it.  For example, the number `1.5` can be encoded in a 8-bit binary fixed point with the decimal point the 4th bit as follows:
+
+```
+0 0 0 1 . 1 0 0 0  = 1.5
+```
+
+Or, another way to think about a fixed point number is that it is an integer multiplied by a fractional power of two.  For example, the above fixed point number could be thought of as:
+
+```
+1.5 = 0 0 0 1 . 1 0 0 0 = 0x18 * 2^-4
+```
+
+The nice thing about fixed point numbers is that integer arithmetic operations translate directly into arithmetic on fixed point numbers combined with shifting. For example, the product of two fixed point numbers can be written as their integer product shifted right by the decimal point.
+
+```
+(a * 2^-p) * (b * 2^-p) = a * b * 2^-2p = (a * b * 2^-p) * 2^-p
+```
+
 ### Floating point
 
+Fixed point is a fast way to encode fractions, but it has the problem that it can't easily represent very large or very small numbers.  The solution to this is to use [scientific notation](http://en.wikipedia.org/wiki/Scientific_notation), which allows the position of the decimal mark to change. [Floating point numbers](http://en.wikipedia.org/wiki/Floating_point) are the application of scientific notation to binary numbers. Today, floating point numbers are standardized by the [IEEE](http://en.wikipedia.org/wiki/IEEE_floating_point), and most computers have special hardware optimizations to support it.
 
+A floating point number consists of 3 parts:
 
+* The *significand*
+* The *exponent*
+* And the *sign bit*
+
+And the float encodes a rational number of the form:
+
+```
+-1^sign * significand * 2^exponent
+```
+
+However, the number of bits reserved for the significand in a floating point number is finite, and so arithmetic on floats of different magnitudes requires rounding.
 
 ## How do we implement robust algorithms?
 
