@@ -133,11 +133,11 @@ Now suppose that we run this algorithm with the following list of points (origin
 
 We would expect the output from this process to look something like this:
 
-<img src="http://mikolalysenko.github.io/robust-arithmetic/images/robust-hull.svg">
+<img src="http://mikolalysenko.github.io/robust-arithmetic/images/robust-hull.svg" width="400">
 
 Instead though, if we use the fragile left right test described above, the output will look like this:
 
-<img src="http://mikolalysenko.github.io/robust-arithmetic/images/fragile-hull.svg">
+<img src="http://mikolalysenko.github.io/robust-arithmetic/images/fragile-hull.svg" width="400">
 
 Incredibly, the resulting polygon isn't even convex!  The moral of the story is that even small errors in computational geometry can have *big* consequences.  If you want to test this out yourself, take a look the [hull.js](demos/hull.js) file in the demos folder.
 
