@@ -67,7 +67,7 @@ In addition to looking absolutely crazy, the following things are wrong with thi
 1.  Many points are incorrectly classified as being on the line.
 2.  Some points near the boundary are incorrectly classified as being to the left or right of the line.
 
-These small errors near the boundary can have big consequences when they are used as the basis for computational reasoning.
+These small errors near the boundary can have big consequences when they are used as the basis for computational reasoning.  If you want to experiment with this yourself, take a look at the file [orient.js](demos/orient.js) in the demos folder.
 
 ### Example: Convex hull
 
@@ -143,8 +143,11 @@ Incredibly, the resulting polygon isn't even convex!  The moral of the story is 
 
 ## Numbers in the word RAM
 
+To better understand what goes wrong with approximate arithmetic, we will review a few of the common representations for real numbers that are used in computers.
 
 ### Integers
+
+The default data type in the word RAM model, and generally in any computer, is [finite size integer](http://en.wikipedia.org/wiki/Word_(computer_architecture)).  These integers are encoded as bit strings of length `n` and can represent any number from `0` to `2^n - 1`, or `-2^(n-1)` to `2^(n-1) - 1` using [two's complement](http://en.wikipedia.org/wiki/Two's_complement). Excluding overflow, arithmetic on integers is exact.
 
 ### Fixed point
 
@@ -153,15 +156,14 @@ Incredibly, the resulting polygon isn't even convex!  The moral of the story is 
 
 
 
-## How do we implement robust predicates?
+## How do we implement robust algorithms?
 
 ### Rationals and big numbers
 
 ### Symbolic computations and radicals
 
-### Constructions vs Predicates
+### Constructions vs. Predicates
 
-While in general it isn't usually possible to just translate an arbitrary real RAM program into the word 
 
 
 ## Implementing predicates
@@ -181,7 +183,6 @@ While in general it isn't usually possible to just translate an arbitrary real R
 
 ## Writing robust code in JavaScript
 
-### Summary of robust-* modules
 
 
 ## References
