@@ -19,10 +19,6 @@ var points = []
 var robustTriangulation = []
 var nonrobustTriangulation = []
 
-for(var i=0; i<100; ++i) {
-  points.push([i/100.0, 1e-6 * Math.random() + 0.5])
-}
-
 shell.on("init", function() {
   canvas = document.createElement("canvas")
   canvas.width = shell.width

@@ -1,5 +1,7 @@
 # Robust arithmetic in JavaScript
 
+These notes are adapted from the class lecture notes for CS558, Computational Geometry, which was taught at the University of Wisconsin-Madison in the fall of 2013.
+
 ### The real RAM model
 
 In computational geometry, many algorithms are described and analyzed in terms of the [real RAM model](http://en.wikipedia.org/wiki/Blum%E2%80%93Shub%E2%80%93Smale_machine). A real RAM machine is a fictitious sort of computer whose memory cells contain arbitrary [real numbers](http://en.wikipedia.org/wiki/Real_number) and whose operations include ordinary arithmetic (`+, -, *, /` exponentiation, etc.). The real RAM model conceptually simplifies many algorithms and is a useful tool for both teaching and exploring geometric ideas.
@@ -23,6 +25,8 @@ In the cases where exactness may not be possible, the next best solution is robu
 Finally, there are fragile algorithms. Fragile algorithms by definition have bugs since they don't even compute an approximation of the correct real algorithm. Yet, even though fragile algorithms don't always work, they can still be used as long as great care is taken to restrict their inputs to precisely the cases in which they produce acceptable results. While it might be slightly easier to get an initial fragile implementation of an algorithm up and running, correcting and refining them is a grueling and difficult process that does not necessarily converge to a working solution. As a result, it can often save a lot of time and heart ache to spend some more brain power up front in devising an exact or robust solution.
 
 ## Why robustness matters
+
+To illustrate why robustness matters, here are 
 
 ### Example: Left-right test
 
@@ -67,8 +71,78 @@ These small errors near the boundary can have big consequences when they are use
 
 ### Example: Convex hull
 
+To illustrate one way in which this can go wrong, consider the problem of finding the convex hull of a set of points. One simple algorithm for doing this is to use incremental insertion.  In JavaScript, this might be done like this:
+
+```javascript
+function incrementalConvexHull(points, leftRight) {
+  //Construct initial hull
+  var hull = points.slice(0, 3)
+  if(leftRight(hull[0], hull[1], hull[2]) < 0) {
+    hull[0] = points[1]
+    hull[1] = points[0]
+  }
+
+  //Insert points into the hull
+  for(var i=3; i<points.length; ++i) {
+    var r = points[i]
+
+    //Scan through points to find edges visible from r
+    var start = -1, stop = -1, n=hull.length
+    var prev = leftRight(r, hull[n-2], hull[n-1]) >= 0
+    for(var j=0,k=n-1; j<n; k=j++) {
+      var cur = leftRight(r, hull[k], hull[j]) >= 0
+      if(!cur && prev) {
+        start = j
+        if(stop >= 0) { break }
+      }
+      if(cur && !prev) {
+        stop = k
+        if(start >= 0) { break }
+      }
+      prev = cur
+    }
+
+    //If point inside hull, skip it
+    if(start < 0) {
+      continue
+    }
+
+    //Otherwise, insert point into hull
+    if(start <= stop) {
+      hull.splice(start, stop - start, r)
+    } else {
+      hull.splice(start, hull.length-start, r)
+      hull.splice(0, stop)
+    }
+  }
+
+  return hull
+}
+```
+
+Now suppose that we run this algorithm with the following list of points (originally constructed by Kettner et al.):
+
+```javascript
+[ [24.00000000000005, 24.000000000000053],
+  [54.85, 6],
+  [24.000000000000068, 24.000000000000071],
+  [54.850000000000357, 61.000000000000121],
+  [24, 6],
+  [6,6] ]
+```
+
+We would expect the output from this process to look something like this:
+
+<img src="images/robust-hull.svg">
+
+Instead though, if we use the fragile left right test described above, the output will look like this:
+
+<img src="image/fragile-hull.svg">
+
+Incredibly, the resulting polygon isn't even convex!  The moral of the story is that even small errors in computational geometry can have *big* consequences.  If you want to test this out yourself, take a look the [hull.js](demos/hull.js) file in the demos folder.
 
 ## Numbers in the word RAM
+
 
 ### Integers
 
@@ -108,3 +182,10 @@ While in general it isn't usually possible to just translate an arbitrary real R
 ## Writing robust code in JavaScript
 
 ### Summary of robust-* modules
+
+
+## References
+
+[1] L. Kettner, K. Mehlhorn, S. Pion, S. Schirra, C. Yap. "[Classroom examples of robustness problems in geometric computations](http://people.mpi-inf.mpg.de/~kettner/pub/nonrobust_esa_04.pdf)" ESA 2004
+
+[2] J. Shewchuk. "[Lecture notes on robustness](http://www.cs.berkeley.edu/~jrs/meshpapers/robnotes.pdf)" 2013
