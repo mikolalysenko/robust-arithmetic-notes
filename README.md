@@ -183,7 +183,25 @@ And the float encodes a rational number of the form:
 -1^sign * significand * 2^exponent
 ```
 
-However, the number of bits reserved for the significand in a floating point number is finite, and so arithmetic on floats of different magnitudes requires rounding.
+However, the number of bits reserved for the significand in a floating point number is finite, and so arithmetic on floats of different magnitudes requires rounding.  These rounding errors can accumulate and result in incorrect results.  To illustrate how this works, consider a situation where we add 3 floats, first going forward and then in reverse:
+
+```javascript
+var x = 1, y = 1e32, z = -1e32
+var a = x + y
+var b = a + z
+console.log(b)
+
+var c = z + y
+var d = c + x
+console.log(d)
+```
+
+And here is the output of this program:
+
+```javascript
+0
+1
+```
 
 ## How do we implement robust algorithms?
 
