@@ -35,7 +35,22 @@ function naiveLeftRight(r, q, p) {
 }
 ```
 
-Using floating point 
+The sign of this function would determine whether `r` is to the left or the right of the line `pq`. In an idealized real RAM machine, this algorithm should give the correct result.  One way to understand this visually is to fix the points `p` and `q` and vary the point `r`, and plot the sign of the query as the color of each pixel. For example, we take the points `p` and `q` to be `[12,12]` and `[24,24]` and vary the components of `r` over the interval `[0.5,0.5+Math.pow(2,-42)]`, and color the pixels according to the rule:
+
+```
+> 0   ~>    red
+< 0   ~>    blue
+  0   ~>    green
+```
+
+Then we would expect to get an image that looks something like this:
+
+<img src="images/robust-lr.png">
+
+But if the above JavaScript code is actually executed, the output will instead look like this:
+
+<img src="images/naive-lr.png">
+
 
 
 ### Constructions vs Predicates
