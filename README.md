@@ -205,15 +205,24 @@ And here is the output of this program:
 
 ## How do we implement robust algorithms?
 
-### Rationals and big numbers
+The naive application of floating point arithmetic to computational geometry clearly has problems. So we now come to the question of what to do about it? In the large, this is still a topic of active research! But a few tricks are known, and there are generally workable strategies for efficiently implementing exact/robust versions of most classical geometric algorithms.
 
-### Symbolic computations and radicals
+### Big numbers and rationals
+
+The underlying problem with floating point arithmetic is information loss due to rounding. One way to fix this problem is to just expand the number of bits we use so that all calculations can be performed exactly, for example using big numbers. Rational numbers can also be encoded in this way as a pair of big integers. This approach is used in many exact geometry libraries, like [CGAL](http://doc.cgal.org/latest/Number_types/classCGAL_1_1Gmpq.html) and [LEDA](http://www.algorithmic-solutions.info/leda_guide/geometryalgorithms.html).
+
+### Symbolic computations and Galois extensions
+
+Big number data types work well for many problems, but have the problem that they can't represent irrational numbers, like `sqrt(2)`, since they would require an infinite number of bits to represent as a quotient. Irrationals are important in many problems involving distances and rotations, so this limtation may be a serious issue in applications involving rotating bodies.  One solution to this problem is to allow for [symbolic computation](http://en.wikipedia.org/wiki/Symbolic_computation) or to add additional [field extensions](http://en.wikipedia.org/wiki/Galois_extension) for working with roots of polynomials. This approach turns out to be sufficient for many problems, like finding the centers of a Voronoi diagram.
+
+### Computable numbers and continued fractions
+
+But even symbolic methods may run into trouble if one needs to represent transcendental quantities like e or π. In the extreme case, the most general way to represent a real number on a computer is as a computational process. This technique is the basis for the theory of [computable numbers](http://en.wikipedia.org/wiki/Computable_number). One of the most practical methods for working with real numbers as processes is via continued fractions. This approach was [pioneered by Gosper in the 1970s](http://www.inwap.com/pdp10/hbaker/hakmem/cf.html). In some sense, this is the limit of what we can possibly hope to represent in a computer. If your algorithm requires operations involving non-computable real numbers, then you may be out of luck or perhaps you should try implementing in a different universe.
 
 ### Constructions vs. Predicates
 
 
-
-## Implementing predicates
+## Implementing robust predicates
 
 ### Non-overlapping sequences
 
@@ -221,11 +230,7 @@ And here is the output of this program:
 
 ### Multiplication
 
-### Homogeneous coordinates
-
-### Adaptivity
-
-
+### Filters
 
 
 ## Writing robust code in JavaScript
