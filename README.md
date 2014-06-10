@@ -26,8 +26,6 @@ Finally, there are fragile algorithms. Fragile algorithms by definition have bug
 
 ## Why robustness matters
 
-To illustrate why robustness matters, here are 
-
 ### Example: Left-right test
 
 One of the most basic tasks in computational geometry is to classify wether a point `r` lies to the left or right of an oriented line defined by a pair of points `p` and `q`:  
@@ -128,7 +126,7 @@ Now suppose that we run this algorithm with the following list of points (origin
   [24.000000000000068, 24.000000000000071],
   [54.850000000000357, 61.000000000000121],
   [24, 6],
-  [6,6] ]
+  [6, 6] ]
 ```
 
 We would expect the output from this process to look something like this:
