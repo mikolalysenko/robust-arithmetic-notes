@@ -2,26 +2,33 @@
 
 ### The real RAM model
 
-In computational geometry, many algorithms are described and analyzed in terms of the [real RAM model](http://en.wikipedia.org/wiki/Blum%E2%80%93Shub%E2%80%93Smale_machine). A real RAM machine, is a fictitious sort of computer whose memory cells contain arbitrary [real numbers](http://en.wikipedia.org/wiki/Real_number), and whose operations include ordinary arithmetic, (`+, *, /` exponentiation, etc.). The real RAM model conceptually simplifies many algorithms and is a useful tool for both teaching and exploring geometric ideas.  It is also useful for deriving lower bounds, since the real RAM model is a stronger model of computation than the [word RAM model](http://en.wikipedia.org/wiki/Random-access_machine).
+In computational geometry, many algorithms are described and analyzed in terms of the [real RAM model](http://en.wikipedia.org/wiki/Blum%E2%80%93Shub%E2%80%93Smale_machine). A real RAM machine is a fictitious sort of computer whose memory cells contain arbitrary [real numbers](http://en.wikipedia.org/wiki/Real_number) and whose operations include ordinary arithmetic (`+, -, *, /` exponentiation, etc.). The real RAM model conceptually simplifies many algorithms and is a useful tool for both teaching and exploring geometric ideas.
 
 But the conceptual advantages of the real RAM model come at a cost. The reason for this is that real numbers are infinite structures and require potentially unlimited memory, while the physical computers that actually exist in nature can only represent finite strings of bits. This mismatch in capabilities creates many challenges in the implementation of geometric algorithms.
 
-## Numbers in the word RAM
+### Robustness
 
-### Integers
+A simple strategy for translating a real RAM algorithm into word RAM code is to just replace all of the numbers with approximations, for example using floating point. While this approach has been very successful in the field of numerical methods, in computational geometry it more often runs into problems. Intuitively, the reason for this is that geometric code often needs to make consistent logical decisions based on comparisons between different real numbers. If these comparisons are wrong, the program might produce incorrect output or even crash. To avoid this, great care is needed when implementing a real RAM algorithm. Broadly speaking, implementations of real RAM algorithms can be classified into the following types:
 
-### Fixed point
+#### Exact algorithms
 
-### Floating point
+Exact algorithms are the gold standard for computational geometry.  If an implementation of a real RAM algorithm is exact, then it produces identical output for the same inputs. Of course, not all real RAM algorithms can be implemented exactly, since their output might not be representable (for example, the vertex positions in a [Voronoi diagram](http://en.wikipedia.org/wiki/Voronoi_diagram) are not even rational numbers in general), however for other algorithms which produce purely combinatorial output, like a [Delaunay triangulation](http://en.wikipedia.org/wiki/Delaunay_triangulation) or [convex hull](http://en.wikipedia.org/wiki/Convex_hull), exact results can feasibly be achieved.
 
+#### Robust algorithms
 
-## Robustness
+In the cases where exactness may not be possible, the next best solution is robustness.  A robust algorithm is exact for some small perturbation of its inputs.  Taking Voronoi diagrams as example, it might be true that the exact Voronoi diagram is not representable, however if the positions of the input points are moved slightly then the output is correct. 
+
+#### Fragile algorithms
+
+Finally, there are fragile algorithms. Fragile algorithms by definition have bugs in that they don't even compute an approximation of the correct real algorithm. Yet, even though fragile algorithms don't always work, they can still be used as long as great care is taken to restrict their inputs to precisely the cases in which they produce acceptable results. While it may be easy to get an initial fragile implementation up and running, correcting and refining them is a grueling and difficult process that does not always converge to a working solution. 
+
+## Why robustness matters
 
 ### Example: Left-right test
 
 One of the most basic tasks in computational geometry is to classify wether a point `r` lies to the left or right of an oriented line defined by a pair of points `p` and `q`:  
 
-<img src="images/left-right.png">
+<img src="images/left-right.png" width="400px">
 
 Naively, one might attempt to implement such a test using a determinant calculation, or [perp product](http://geomalgorithms.com/vector_products.html#2D-Perp-Product), like this:
 
@@ -51,11 +58,17 @@ But if the above JavaScript code is actually executed, the output will instead l
 
 <img src="images/naive-lr.png">
 
+### Example: Convex hull
 
 
-### Constructions vs Predicates
+## Numbers in the word RAM
 
-While in general it isn't usually possible to just translate an arbitrary real RAM program into the word 
+### Integers
+
+### Fixed point
+
+### Floating point
+
 
 
 
@@ -65,11 +78,14 @@ While in general it isn't usually possible to just translate an arbitrary real R
 
 ### Symbolic computations and radicals
 
-### Non-overlapping sequences
+### Constructions vs Predicates
 
+While in general it isn't usually possible to just translate an arbitrary real RAM program into the word 
 
 
 ## Implementing predicates
+
+### Non-overlapping sequences
 
 ### Addition
 

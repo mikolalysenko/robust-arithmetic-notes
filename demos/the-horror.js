@@ -1,7 +1,9 @@
 "use strict"
 
+var fs = require("fs")
 var ndarray = require("ndarray")
 var imshow = require("ndarray-imshow")
+var savePixels = require("save-pixels")
 var robustLeftRight = require("robust-orientation")
 
 var NX = 512
@@ -32,11 +34,12 @@ function plotPredicate(pred) {
       }
     }
   }
-  imshow(img)
+  //imshow(img)
+  return savePixels(img, "png")
 }
 
 console.log("naive predicate")
-plotPredicate(naiveLeftRight)
+plotPredicate(naiveLeftRight).pipe(fs.createWriteStream(__dirname + "/../images/naive-lr.png"))
 
 console.log("robust predicate")
-plotPredicate(robustLeftRight)
+plotPredicate(robustLeftRight).pipe(fs.createWriteStream(__dirname + "/../images/robust-lr.png"))
