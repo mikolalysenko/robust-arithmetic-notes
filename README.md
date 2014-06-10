@@ -20,7 +20,7 @@ In the cases where exactness may not be possible, the next best solution is robu
 
 #### Fragile algorithms
 
-Finally, there are fragile algorithms. Fragile algorithms by definition have bugs in that they don't even compute an approximation of the correct real algorithm. Yet, even though fragile algorithms don't always work, they can still be used as long as great care is taken to restrict their inputs to precisely the cases in which they produce acceptable results. While it may be easy to get an initial fragile implementation up and running, correcting and refining them is a grueling and difficult process that does not always converge to a working solution. 
+Finally, there are fragile algorithms. Fragile algorithms by definition have bugs since they don't even compute an approximation of the correct real algorithm. Yet, even though fragile algorithms don't always work, they can still be used as long as great care is taken to restrict their inputs to precisely the cases in which they produce acceptable results. While it might be slightly easier to get an initial fragile implementation of an algorithm up and running, correcting and refining them is a grueling and difficult process that does not necessarily converge to a working solution. As a result, it can often save a lot of time and heart ache to spend some more brain power up front in devising an exact or robust solution.
 
 ## Why robustness matters
 
