@@ -45,9 +45,9 @@ function naiveLeftRight(r, q, p) {
 The sign of this function would determine whether `r` is to the left or the right of the line `pq`. In an idealized real RAM machine, this algorithm should give the correct result.  One way to understand this visually is to fix the points `p` and `q` and vary the point `r`, and plot the sign of the query as the color of each pixel. For example, we take the points `p` and `q` to be `[12,12]` and `[24,24]` and vary the components of `r` over the interval `[0.5,0.5+Math.pow(2,-42)]`, and color the pixels according to the rule:
 
 ```
-> 0   ~>    red
-< 0   ~>    blue
-  0   ~>    green
+left   ~>  blue
+right  ~>  red
+on     ~>  green
 ```
 
 Then we would expect to get an image that looks something like this:
@@ -57,6 +57,13 @@ Then we would expect to get an image that looks something like this:
 But if the above JavaScript code is actually executed, the output will instead look like this:
 
 <img src="images/naive-lr.png">
+
+In addition to looking absolutely crazy, the following things are wrong with this picture:
+
+1.  Many points are incorrectly classified as being on the line.
+2.  Some points near the boundary are incorrectly classified as being to the left or right of the line.
+
+These small errors near the boundary can have big consequences when they are used as the basis for computational reasoning.
 
 ### Example: Convex hull
 
