@@ -203,9 +203,7 @@ And here is the output of this program:
 1
 ```
 
-## How do we implement robust algorithms?
-
-The naive application of floating point arithmetic to computational geometry clearly has problems. So we now come to the question of what to do about it? In the large, this is still a topic of active research! But a few tricks are known, and there are generally workable strategies for efficiently implementing exact/robust versions of most classical geometric algorithms.
+## Extended number systems
 
 ### Big numbers and rationals
 
@@ -219,21 +217,27 @@ Big number data types work well for many problems, but have the problem that the
 
 But even symbolic methods may run into trouble if one needs to represent transcendental quantities like e or π. In the extreme case, the most general way to represent a real number on a computer is as a computational process. This technique is the basis for the theory of [computable numbers](http://en.wikipedia.org/wiki/Computable_number). One of the most practical methods for working with real numbers as processes is via continued fractions. This approach was [pioneered by Gosper in the 1970s](http://www.inwap.com/pdp10/hbaker/hakmem/cf.html). In some sense, this is the limit of what we can possibly hope to represent in a computer. If your algorithm requires operations involving non-computable real numbers, then you may be out of luck or perhaps you should try implementing in a different universe.
 
-### Constructions vs. Predicates
+## Exact floating point predicates
 
+### Predicates vs. constructions
 
-## Implementing robust predicates
+The main drawback in the above approaches is that they are much more expensive than using floating point arithmetic.  Switching from floats to extended formats, like big rationals, can slow down a math intensive programs hundreds of times or more. This run time overhead is a serious problem, and so we would like to avoid paying these costs if possible. In developing a solution it is useful to make a distinction between two types of computations involving real numbers: *constructions* and *predicates*.
 
-### Non-overlapping sequences
+#### Constructions
 
-### Addition
+A function of real numbers is a *construction* if the real numbers are a subset of the range of its returned values. For example, finding the equation of a line through two points is a construction.
 
-### Multiplication
+#### Predicates
 
-### Filters
+A function of real numbers is a *predicate* if its range of returned values is a finite set.  For example, the left-right test described above returns one of three different values: `LEFT`, `RIGHT` or `ON`.
 
+### Floating point filters
 
-## Writing robust code in JavaScript
+In geometric computations, it is better to use predicates instead of constructions whenever possible. The reason is that it is often possible to evaluate predicates exactly and directly on floating point inputs without resorting to expensive extended number formats. One strategy for efficiently implementing these predicates is the concept of a *floating point filter*.  Filters use ordinary floating point arithmetic to evaluate the predicate initially, and only fall back to refine the result with extended arithmetic when necessary.
+
+This technique was [popularized by Jonathan Shewchuk](http://www.cs.cmu.edu/~quake/robust.html), who used adaptive filtering in his implementation of the [triangle](http://www.cs.cmu.edu/~quake/triangle.html) Delaunay triangulation library. More inforomation about this technique can be found here.
+
+## Implementing robust predicates in JavaScript
 
 
 
