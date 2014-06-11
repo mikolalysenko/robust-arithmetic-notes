@@ -235,9 +235,14 @@ A function of real numbers is a *predicate* if its range of returned values is a
 
 In geometric computations, it is better to use predicates instead of constructions whenever possible. The reason is that it is often possible to evaluate predicates exactly and directly on floating point inputs without resorting to expensive extended number formats. One strategy for efficiently implementing these predicates is the concept of a *floating point filter*.  Filters use ordinary floating point arithmetic to evaluate the predicate initially, and only fall back to refine the result with extended arithmetic when necessary.
 
-This technique was [popularized by Jonathan Shewchuk](http://www.cs.cmu.edu/~quake/robust.html), who used adaptive filtering in his implementation of the [triangle](http://www.cs.cmu.edu/~quake/triangle.html) Delaunay triangulation library. More inforomation about this technique can be found here.
+## Implementing robust predicates for polynomials
 
-## Implementing robust predicates in JavaScript
+Filtering was [popularized by Jonathan Shewchuk](http://www.cs.cmu.edu/~quake/robust.html), and he applied it to the [triangle](http://www.cs.cmu.edu/~quake/triangle.html) mesh generation library. The approach that we will describe here is essentially the same, though all of our code examples are in JavaScript.  These techniques can be used to exactly compute the sign of any polynomial when evaluated on floating point numbers. At a high level, the procedure for doing this is as follows:
+
+1. First, convert the polynomial into an [arithmetic circuit](http://en.wikipedia.org/wiki/Arithmetic_circuit_complexity) (that is a directed acyclic graph, whose nodes correspond to arithmetic operations `+` and `*`).
+2. Working from the bottom up, compute a floating point approximation of the value of the polynomial while also tracking error bounds.
+3. If the error bounds around the solution do not cross the zero line, then return the current approximation.
+4. Otherwise, reuse the previous computations to compute a refinement of the solution at a higher degree of precision.
 
 
 
