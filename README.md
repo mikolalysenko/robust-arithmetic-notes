@@ -244,10 +244,95 @@ Filtering was [popularized by Jonathan Shewchuk](http://www.cs.cmu.edu/~quake/ro
 3. If the error bounds around the solution do not cross the zero line, then return the current approximation.
 4. Otherwise, reuse the previous computations to compute a refinement of the solution at a higher degree of precision.
 
+### Non-overlapping sequences
 
+But before explaining how to implement adaptivity and filtering, let us begin by discussing a strategy for performing exact arithmetic on floating point numbers. The basic idea in this approach is to represent intermediate values using as a sum of floating point numbers. To facilitate computation, the terms in these summations are required to be *non-overlapping*, which is that the range of the bits of the number do not intersect.  Non-overlapping sequences act like a sparse representation of a big number, but have the advantage that they use the built in floating point hardware efficiently.  There are some disadvantages though, as underflows with denormalized numbers or overflows to infinity are not representable.  However, for a large range of inputs non-overlapping sequences allow for exact floating point computations and they can be implemented efficiently.
+
+### Exact addition
+
+To explain how exact floating point arithmetic with non-overlapping sequences works, we will start by explaining how to add to convert the sum of two floating point numbers into a non-overlapping sequence of two floats.  The classic algorithm for doing this is due to Knuth:
+
+```javascript
+function twoSum(a, b) {
+  var x  = a + b
+  var bv = x - a
+  var av = x - bv
+  var br = b - bv
+  var ar = a - av
+  return [ar+br, x]
+}
+```
+
+This number returns a pair of non-overlapping floating point numbers arranged in order of ascending magnitude.  You can use this function in your own code with the [`two-sum`](https://github.com/mikolalysenko/two-sum) module on npm.  This algorithm can also be extended to sum two non-overlapping series by merging the sorted lists and applying the summation to each term successively.  An efficient implementation of this technique is described by Shewchuk in his writings on robust predicates, and JavaScript implementation can be found in the [`robust-sum`](https://github.com/mikolalysenko/robust-sum) module on npm.
+
+### Exact multiplication
+
+Exact multiplication of floating point numbers is a bit trickier. The main idea though is to split each of the operands into a pair of non-overlapping floats, each with half as much precision as the input
+
+```javascript
+var SPLITTER = +(Math.pow(2, 27) + 1.0)
+
+function split(a) {
+  var c = SPLITTER * a
+  var abig = c - a
+  var ahi = c - abig
+  var alo = a - ahi 
+  return [alo, ahi]
+}
+```
+
+Once we can split a float in two, it is possible to calculate the residual error using the distributive law.  This gives the following algorithm for exactly computing the product of two floating point numbers as a pair of non-overlapping values.
+
+```javascript
+function twoProduct(a, b) {
+  var as = split(a)
+  var bs = split(b)
+
+  var x = a * b
+
+  var err1 = x - (as[1] * bs[1])
+  var err2 = err1 - (as[0] * bs[1])
+  var err3 = err2 - (as[1] * bs[0])
+
+  var y = as[0] * bs[0] - err3
+
+  return [y, x]
+}
+```
+
+This algorithm can be found on npm in the [two-product](https://github.com/mikolalysenko/two-product) module.  Using this procedure and the algorithm in `two-sum`, it is possible to multiply any non-overlapping sequence by a scalar value exactly.  This algorithm is implemented in the [`robust-scale`](https://github.com/mikolalysenko/robust-scale) module.  Combining robust-scale with robust-sum, we can also multiply any pair of non-overlapping sequences, which finally yields the [`robust-product`](https://github.com/mikolalysenko/robust-product) module.
+
+### Adaptivity and filtering
+
+One interesting property of the above algorithms is that they are all streaming, in the sense that the higher order terms of the sequence are computed first and then lower order corrections are accumulated and added back in.  This means that it is possible to adaptively expand the precision of the computations, starting from a coarse approximation of the solution and iteratively refining it only as needed.  Shewchuk described a method for applying this analysis and carried out these calculations for 2D and 3D orientation and in-circle tests by hand, though the same technique can be automated. Van Wyk and Fortune implemented an automatic system for predicates on integer coordinates, though it is not as fast. More recently, work by Pion et al in CGAL has focused on implementing algorithms for exact floating point filters and their formal verification within the CoQ theorem prover.
+
+## Using robust predicates in JavaScript
+
+Unfortunately, none of these automatic adaptive floating point predicate have been ported to JavaScript yet.  However, I have translated by hand a limited subset of Shewchuk's robust predicates and implemented some simple algorithms for working with non-overlapping sequences.  While these are not anywhere near as fast as what is possible with the current state of the art, it is at least sufficient for getting started with exact computations, and maybe someday soon we will be able to speed them up.  Here is a list of the some of the modules which are currently available for working with non-overlapping sequences:
+
+* [two-sum](https://github.com/mikolalysenko/two-sum) Implements Knuth's two-sum algorithm
+* [two-product](https://github.com/mikolalysenko/two-product) Implements exact multiplication for floats
+* [robust-sum](https://github.com/mikolalysenko/robust-sum) Exact addition for non-overlapping sequences
+* [robust-subtract](https://github.com/mikolalysenko/robust-subtract) Exact subtraction for non-overlapping sequences
+* [robust-scale](https://github.com/mikolalysenko/robust-scale) Exact scalar multiplication on non-overlapping sequences
+* [robust-product](https://github.com/mikolalysenko/robust-product) Exact multiplication of non-overlapping sequences
+* [robust-compare](https://github.com/mikolalysenko/robust-compare) Compares two non-overlapping sequences
+* [robust-compress](https://github.com/mikolalysenko/robust-compress) Renormalizes a non-overlapping sequence
+
+
+And these modules implement some common robust-predicates:
+
+* [robust-orientation](https://github.com/mikolalysenko/robust-orientation) Exactly computes the orientation of a tuple of points
+* [robust-in-sphere](https://github.com/mikolalysenko/robust-in-sphere) Exact in sphere/in circle test
 
 ## References
 
 [1] L. Kettner, K. Mehlhorn, S. Pion, S. Schirra, C. Yap. "[Classroom examples of robustness problems in geometric computations](http://people.mpi-inf.mpg.de/~kettner/pub/nonrobust_esa_04.pdf)" ESA 2004
 
 [2] J. Shewchuk. "[Lecture notes on robustness](http://www.cs.berkeley.edu/~jrs/meshpapers/robnotes.pdf)" 2013
+
+[3] J. Shewchuk. "[Adaptive precision floating-point arithmetic and fast robust predicates for computational geometry](http://www.cs.cmu.edu/~quake/robust.html)"
+
+[4] D. Priest. "[On the properties of floating point arithmetics](ftp://ftp.icsi.berkeley.edu/pub/theory/priest-thesis.ps.Z)"
+
+[]
