@@ -308,7 +308,7 @@ One interesting property of the above algorithms is that they are all streaming,
 
 ## Using robust predicates in JavaScript
 
-Unfortunately, none of these automatic adaptive floating point predicate have been ported to JavaScript yet.  However, I have translated by hand a limited subset of Shewchuk's robust predicates and implemented some simple algorithms for working with non-overlapping sequences.  While these are not anywhere near as fast as what is possible with the current state of the art, it is at least sufficient for getting started with exact computations, and maybe someday soon we will be able to speed them up.  Here is a list of the some of the modules which are currently available for working with non-overlapping sequences:
+Unfortunately, no exact predicate generator (like LN) exists for JavaScript yet.  However, I have translated by hand a limited subset of Shewchuk's robust predicates and implemented some simple algorithms for working with non-overlapping sequences.  While these are not anywhere near as fast as what is possible with the current state of the art, it is at least sufficient for getting started with exact computations, and maybe someday soon we will be able to speed them up.  Here is a list of the some of the modules which are currently available for working with non-overlapping sequences:
 
 * [two-sum](https://github.com/mikolalysenko/two-sum) Implements Knuth's two-sum algorithm
 * [two-product](https://github.com/mikolalysenko/two-product) Implements exact multiplication for floats
@@ -334,5 +334,3 @@ And these modules implement some common robust-predicates:
 [3] J. Shewchuk. "[Adaptive precision floating-point arithmetic and fast robust predicates for computational geometry](http://www.cs.cmu.edu/~quake/robust.html)"
 
 [4] D. Priest. "[On the properties of floating point arithmetics](ftp://ftp.icsi.berkeley.edu/pub/theory/priest-thesis.ps.Z)"
-
-[]
